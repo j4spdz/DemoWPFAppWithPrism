@@ -1,18 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
+    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DemoApp.Notes\DemoApp.Notes.csproj" />
-    <ProjectReference Include="..\DemoApp.Paint\DemoApp.Paint.csproj" />
     <ProjectReference Include="..\DemoApp.Shared\DemoApp.Shared.csproj" />
   </ItemGroup>
 

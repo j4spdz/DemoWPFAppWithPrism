@@ -3,10 +3,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
         xmlns:local="clr-namespace:DemoApp.Core"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Vertical" Background="BurlyWood">
+            <Button Content="HomeView" Command="{Binding NavigateToPageCommand}" CommandParameter="HomeView"/>
+            <Button Content="Notes" Command="{Binding NavigateToPageCommand}" CommandParameter="NotesView"/>
+            <Button Content="Paint" Command="{Binding NavigateToPageCommand}" CommandParameter="PaintView" />
+        </StackPanel>
         
+        <Border Grid.Column="1">
+            <ContentControl prism:RegionManager.RegionName="MainContentRegion"/>
+        </Border>
     </Grid>
 </Window>

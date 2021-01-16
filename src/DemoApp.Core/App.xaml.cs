@@ -1,5 +1,8 @@
 ﻿using DemoApp.Core.Views;
+using DemoApp.Notes;
+using DemoApp.Paint;
 using Prism.Ioc;
+using Prism.Modularity;
 using Prism.Unity;
 using System;
 using System.Collections.Generic;
@@ -25,6 +28,32 @@ namespace DemoApp.Core
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             //throw new NotImplementedException();
+        }
+
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+        {
+            Type coreModuleType = typeof(CoreModule);
+            moduleCatalog.AddModule(new ModuleInfo()
+            {
+                ModuleName = coreModuleType.Name,
+                ModuleType = coreModuleType.AssemblyQualifiedName,
+            });
+
+            Type notesModuleType = typeof(NotesModule);
+            moduleCatalog.AddModule(new ModuleInfo()
+            {
+                ModuleName = notesModuleType.Name,
+                ModuleType = notesModuleType.AssemblyQualifiedName,
+            });
+
+            Type paintModuleType = typeof(PaintModule);
+            moduleCatalog.AddModule(new ModuleInfo()
+            {
+                ModuleName = paintModuleType.Name,
+                ModuleType = paintModuleType.AssemblyQualifiedName,
+            });
+
+            base.ConfigureModuleCatalog(moduleCatalog);
         }
     }
 }
