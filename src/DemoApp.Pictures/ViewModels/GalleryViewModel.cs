@@ -1,17 +1,15 @@
 ﻿using AsyncAwaitBestPractices;
-using DemoApp.Shared.Helper.Extensions;
+using AsyncAwaitBestPractices.MVVM;
+using DemoApp.Gallery.Services;
 using Prism.Commands;
+using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace DemoApp.Gallery.ViewModels
 {
@@ -21,7 +19,21 @@ namespace DemoApp.Gallery.ViewModels
     /// </summary>
     public class GalleryViewModel : BindableBase, INavigationAware
     {
-        private string _progressText = "Initializing...";
+        private readonly GalleryService _galleryService;
+
+        public GalleryViewModel(IContainerProvider provider)
+        {
+            _galleryService = provider.Resolve<GalleryService>();
+        }
+
+        private string _imageUrl = "https://images.pexels.com/photos/842711/pexels-photo-842711.jpeg?cs=srgb&dl=pexels-christian-heitz-842711.jpg&fm=jpg";
+        public string ImageUrl
+        {
+            get => _imageUrl;
+            set => SetProperty(ref _imageUrl, value);
+        }
+
+        private string _progressText = "Loading...";
         public string ProgressText
         {
             get => _progressText;
@@ -35,20 +47,40 @@ namespace DemoApp.Gallery.ViewModels
             set => SetProperty(ref _progressValue, value);
         }
 
-        public bool HasImage => SampleImage != null;
-
-        public ImageSource _sampleImage;
-        public ImageSource SampleImage
+        public ImageSource _displayImage;
+        public ImageSource DisplayImage
         {
-            get => _sampleImage;
-            set
-            {
-                SetProperty(ref _sampleImage, value);
-                RaisePropertyChanged(nameof(HasImage));
-            }
+            get => _displayImage;
+            set => SetProperty(ref _displayImage, value);
+        }
+
+        private bool _loadingImage;
+        public bool LoadingImage
+        {
+            get => _loadingImage;
+            set => SetProperty(ref _loadingImage, value);
         }
 
         private CancellationTokenSource Cts { get; set; }
+
+        private ICommand _submitCommand;
+        public ICommand SubmitCommand => _submitCommand ??
+            (_submitCommand = new AsyncCommand(GetImage));
+
+        private async Task GetImage()
+        {
+            LoadingImage = true;
+
+            var progress = new Progress<float>(value =>
+            {
+                ProgressValue = value * 100;
+                ProgressText = $"{value * 100}%";
+            });
+            DisplayImage = await _galleryService.GetImageFromURL(ImageUrl, progress, Cts.Token);
+
+            ProgressText = "Completed";
+            LoadingImage = false;
+        }
 
         private ICommand _unloadViewCommand;
         public ICommand UnloadViewCommand => _unloadViewCommand ??
@@ -65,7 +97,6 @@ namespace DemoApp.Gallery.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             Cts = new CancellationTokenSource();
-            LoadView(Cts.Token).SafeFireAndForget();
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -78,60 +109,5 @@ namespace DemoApp.Gallery.ViewModels
         }
 
         #endregion INavigationAware
-
-        private async Task LoadView(CancellationToken token)
-        {
-            var progress = new Progress<float>(value =>
-            {
-                ProgressValue = value*100;
-                ProgressText = $"{value*100}%";
-            });
-
-            if(!HasImage)
-            {
-                await FetchImages(200, progress, token);
-
-                if (!token.IsCancellationRequested)
-                {
-                    ProgressText = "Completed";
-                }
-            }
-        }
-
-        // Show a progress bar while retrieving images
-        private async Task FetchImages(int count, IProgress<float> progress, CancellationToken token)
-        {
-            try
-            {
-                // Setting up the http client used to download the data
-                using (var client = new HttpClient())
-                {
-                    client.Timeout = TimeSpan.FromMinutes(5);
-                    var downloadUrl = "https://images.pexels.com/photos/842711/pexels-photo-842711.jpeg?cs=srgb&dl=pexels-christian-heitz-842711.jpg&fm=jpg";
-
-                    using (var ms = new MemoryStream())
-                    {
-                        await client.DownloadAsync(downloadUrl, ms, progress, token); 
-
-                        //[BugFix] The image cannot be decoded. The image header might be corrupted
-                        ms.Position = 0;
-
-                        // Create a BitmapSource  
-                        BitmapImage bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = ms;
-                        bitmap.EndInit();
-
-                        // Set Image.Source  
-                        SampleImage = bitmap;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-        }
     }
 }

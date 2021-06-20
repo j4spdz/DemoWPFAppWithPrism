@@ -22,7 +22,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Vertical" Background="BurlyWood">
+        <StackPanel Orientation="Vertical">
             <Button Content="HomeView" Command="{Binding NavigateToPageCommand}" CommandParameter="HomeView"/>
             <Button Content="Gallery" Command="{Binding NavigateToPageCommand}" CommandParameter="GalleryView" />
             <Button Content="Notes" Command="{Binding NavigateToPageCommand}" CommandParameter="NotesView"/>

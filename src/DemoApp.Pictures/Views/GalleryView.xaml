@@ -16,30 +16,48 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <Grid>
+    <Grid Background="#FFEAC9">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Background="AliceBlue" Padding="15">
-            <TextBlock Text="Gallery View" FontSize="40"/>
+        <Border Background="#D83A56" Padding="20">
+            <TextBlock Text="Gallery View" FontSize="32" Foreground="White"/>
         </Border>
 
-        <Border Grid.Row="1">
-            <Grid>
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Visibility="{Binding HasImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+        <Border Grid.Row="1" Padding="20">
+            <Grid x:Name="detailsGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBox Text="{Binding ImageUrl}" Padding="10"/>
+                    <Button Grid.Column="1" Content="Submit" Command="{Binding SubmitCommand}" Padding="20,10"/>
+                </Grid>
+
+                <StackPanel Grid.Row="1" 
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ProgressBar Value="{Binding ProgressValue}" 
                                  Height="25" 
                                  Width="300" 
                                  Margin="0,0,0,15"/>
-                    <TextBlock Text="{Binding ProgressText}" FontSize="20"
+                    <TextBlock Text="{Binding ProgressText}"
+                               TextWrapping="Wrap"
                                HorizontalAlignment="Center"/>
                 </StackPanel>
-                
-                <Image Source="{Binding SampleImage}" 
-                       Visibility="{Binding HasImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <Image Grid.Row="1" 
+                       Source="{Binding DisplayImage}" 
+                       Visibility="{Binding LoadingImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
 
             </Grid>
         </Border>        
