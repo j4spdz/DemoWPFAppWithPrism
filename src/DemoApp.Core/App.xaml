@@ -4,6 +4,6 @@
              xmlns:prism="http://prismlibrary.com/"
              xmlns:local="clr-namespace:DemoApp.Core">
     <Application.Resources>
-
+        <ResourceDictionary Source="pack://application:,,,/DemoApp.Shared;component/Resources/DemoTheme.xaml"/>
     </Application.Resources>
 </prism:PrismApplication>

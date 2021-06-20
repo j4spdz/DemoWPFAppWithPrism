@@ -27,14 +27,21 @@
         </Border>
 
         <Border Grid.Row="1">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ProgressBar Value="{Binding ProgressValue}" 
-                             Height="25" 
-                             Width="300" 
-                             Margin="0,0,0,15"/>
-                <TextBlock Text="{Binding ProgressText}" FontSize="20"
-                           HorizontalAlignment="Center"/>
-            </StackPanel>
+            <Grid>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding HasImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <ProgressBar Value="{Binding ProgressValue}" 
+                                 Height="25" 
+                                 Width="300" 
+                                 Margin="0,0,0,15"/>
+                    <TextBlock Text="{Binding ProgressText}" FontSize="20"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+                
+                <Image Source="{Binding SampleImage}" 
+                       Visibility="{Binding HasImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            </Grid>
         </Border>        
     </Grid>
 </UserControl>
