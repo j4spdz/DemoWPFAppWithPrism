@@ -1,4 +1,5 @@
 ﻿using DemoApp.Core.Views;
+using DemoApp.Gallery;
 using DemoApp.Notes;
 using DemoApp.Paint;
 using Prism.Ioc;
@@ -37,6 +38,13 @@ namespace DemoApp.Core
             {
                 ModuleName = coreModuleType.Name,
                 ModuleType = coreModuleType.AssemblyQualifiedName,
+            });
+
+            Type galleryModuleType = typeof(GalleryModule);
+            moduleCatalog.AddModule(new ModuleInfo()
+            {
+                ModuleName = galleryModuleType.Name,
+                ModuleType = galleryModuleType.AssemblyQualifiedName,
             });
 
             Type notesModuleType = typeof(NotesModule);

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DemoApp.Notes\DemoApp.Notes.csproj" />
     <ProjectReference Include="..\DemoApp.Paint\DemoApp.Paint.csproj" />
+    <ProjectReference Include="..\DemoApp.Pictures\DemoApp.Gallery.csproj" />
     <ProjectReference Include="..\DemoApp.Shared\DemoApp.Shared.csproj" />
   </ItemGroup>
 

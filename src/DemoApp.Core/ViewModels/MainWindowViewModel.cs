@@ -2,38 +2,35 @@
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace DemoApp.Core.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private readonly IRegionManager _manager;
+        private readonly IRegionManager _regionManager;
 
-        public MainWindowViewModel(IRegionManager manager)
+        public MainWindowViewModel(IRegionManager regionManager)
         {
-            _manager = manager;
-
-            WindowLoadedCommand = new DelegateCommand(WindowsLoaded);
-            NavigateToPageCommand = new DelegateCommand<object>(NavigateToPage);
+            _regionManager = regionManager;
         }
 
-        public DelegateCommand WindowLoadedCommand { get; private set; }
-        public DelegateCommand<object> NavigateToPageCommand { get; private set; }
+        private ICommand _windowLoadedCommand;
+        public ICommand WindowLoadedCommand => _windowLoadedCommand ??
+            (_windowLoadedCommand = new DelegateCommand(WindowsLoaded));
 
         private void WindowsLoaded()
         {
-            _manager.RequestNavigate(RegionConstants.MainContentRegion, NavigationConstants.HomeView);
+            _regionManager.RequestNavigate(RegionConstants.MainContentRegion, NavigationConstants.HomeView);
         }
 
-        private void NavigateToPage(object parameter)
+        private ICommand _navigateToPageCommand;
+        public ICommand NavigateToPageCommand => _navigateToPageCommand ??
+            (_navigateToPageCommand = new DelegateCommand<string>(NavigateToPage));
+
+        private void NavigateToPage(string navigatePath)
         {
-            var navigatePath = parameter as string;
-            _manager.RequestNavigate(RegionConstants.MainContentRegion, navigatePath);
+            _regionManager.RequestNavigate(RegionConstants.MainContentRegion, navigatePath);
         }
     }
 }
