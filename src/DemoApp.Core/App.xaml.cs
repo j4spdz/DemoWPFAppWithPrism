@@ -2,8 +2,11 @@
 using DemoApp.Gallery;
 using DemoApp.Notes;
 using DemoApp.Paint;
+using DemoApp.Shared.RegionAdapters;
+using MahApps.Metro.Controls;
 using Prism.Ioc;
 using Prism.Modularity;
+using Prism.Regions;
 using Prism.Unity;
 using System;
 using System.Collections.Generic;
@@ -62,6 +65,12 @@ namespace DemoApp.Core
             });
 
             base.ConfigureModuleCatalog(moduleCatalog);
+        }
+
+        protected override void ConfigureRegionAdapterMappings(RegionAdapterMappings regionAdapterMappings)
+        {
+            base.ConfigureRegionAdapterMappings(regionAdapterMappings);
+            regionAdapterMappings.RegisterMapping(typeof(HamburgerMenu), Container.Resolve<HamburgerMenuRegionAdapter>());
         }
     }
 }

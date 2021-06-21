@@ -1,36 +1,85 @@
-﻿<Window x:Class="DemoApp.Core.Views.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DemoApp.Core"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:prism="http://prismlibrary.com/"
-        prism:ViewModelLocator.AutoWireViewModel="True"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1000">
+﻿<mah:MetroWindow x:Class="DemoApp.Core.Views.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:DemoApp.Core"
+                 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+                 xmlns:prism="http://prismlibrary.com/"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"   
+                 xmlns:c="clr-namespace:DemoApp.Shared.Controls;assembly=DemoApp.Shared"
+                 xmlns:s="clr-namespace:DemoApp.Shared.Models;assembly=DemoApp.Shared"
+                 prism:ViewModelLocator.AutoWireViewModel="True"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d"
+                 Title="DemoApp" Height="800" Width="1000">
 
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
+    <mah:MetroWindow.Resources>
+        <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type c:DemoMenuItem}">
+            <Grid Height="48">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:HamburgerMenu}}, Path=CompactPaneLength, Mode=OneWay}" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <ContentControl Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{Binding Icon}"
+                                Focusable="False" />
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           FontSize="16"
+                           Text="{Binding Label}" />
+            </Grid>
+        </DataTemplate>
+    </mah:MetroWindow.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <mah:HamburgerMenu x:Name="HamburgerMenuControl"
+                           ItemsSource="{Binding AppMenu}"
+                           DisplayMode="CompactInline"
+                           HamburgerWidth="48"
+                           ItemTemplate="{StaticResource MenuItemTemplate}"
+                           prism:RegionManager.RegionName="{x:Static s:RegionConstants.MainContentRegion}">
 
-        <StackPanel Orientation="Vertical">
-            <Button Content="HomeView" Command="{Binding NavigateToPageCommand}" CommandParameter="HomeView"/>
-            <Button Content="Gallery" Command="{Binding NavigateToPageCommand}" CommandParameter="GalleryView" />
-            <Button Content="Notes" Command="{Binding NavigateToPageCommand}" CommandParameter="NotesView"/>
-            <Button Content="Paint" Command="{Binding NavigateToPageCommand}" CommandParameter="PaintView" />
-        </StackPanel>
-        
-        <Border Grid.Column="1">
-            <ContentControl prism:RegionManager.RegionName="MainContentRegion"/>
-        </Border>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ItemInvoked">
+                    <i:InvokeCommandAction Command="{Binding NavigateToPageCommand}" PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+       
+            <mah:HamburgerMenu.ContentTemplate>
+                <DataTemplate>
+                    <mah:TransitioningContentControl Content="{Binding}" RestartTransitionOnContentChange="True" Transition="Custom">
+                        <mah:TransitioningContentControl.CustomVisualStates>
+                            <VisualState x:Name="CustomTransition">
+                                <Storyboard>
+                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Storyboard.TargetName="CurrentContentPresentationSite"
+                                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                        <SplineDoubleKeyFrame KeyTime="00:00:00.150" Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Storyboard.TargetName="CurrentContentPresentationSite"
+                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="200" />
+                                        <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1"
+                                                    KeyTime="00:00:00.300"
+                                                    Value="0" />
+                                    </DoubleAnimationUsingKeyFrames>
+
+                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Storyboard.TargetName="PreviousContentPresentationSite"
+                                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </VisualState>
+                        </mah:TransitioningContentControl.CustomVisualStates>
+                    </mah:TransitioningContentControl>
+                </DataTemplate>
+            </mah:HamburgerMenu.ContentTemplate>
+        </mah:HamburgerMenu>
     </Grid>
-</Window>
+</mah:MetroWindow>

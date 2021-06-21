@@ -1,5 +1,4 @@
-﻿using AsyncAwaitBestPractices;
-using AsyncAwaitBestPractices.MVVM;
+﻿using AsyncAwaitBestPractices.MVVM;
 using DemoApp.Gallery.Services;
 using Prism.Commands;
 using Prism.Ioc;
@@ -82,16 +81,6 @@ namespace DemoApp.Gallery.ViewModels
             LoadingImage = false;
         }
 
-        private ICommand _unloadViewCommand;
-        public ICommand UnloadViewCommand => _unloadViewCommand ??
-            (_unloadViewCommand = new DelegateCommand(UnloadView));
-
-        private void UnloadView()
-        {
-            Cts.Cancel();
-            Cts.Dispose();
-        }
-
         #region INavigationAware
 
         public void OnNavigatedTo(NavigationContext navigationContext)
@@ -106,6 +95,8 @@ namespace DemoApp.Gallery.ViewModels
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
+            Cts.Cancel();
+            Cts.Dispose();
         }
 
         #endregion INavigationAware
