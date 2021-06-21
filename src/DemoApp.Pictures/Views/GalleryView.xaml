@@ -10,17 +10,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Grid Background="#FFEAC9">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <Border Background="#D83A56" Padding="20">
-            <TextBlock Text="Gallery View" FontSize="32" Foreground="White"/>
-        </Border>
-
-        <Border Grid.Row="1" Padding="20">
+    <Grid>
+        <Border Padding="20">
             <Grid x:Name="detailsGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

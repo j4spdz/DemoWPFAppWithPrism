@@ -38,7 +38,8 @@
         <mah:HamburgerMenu x:Name="HamburgerMenuControl"
                            ItemsSource="{Binding AppMenu}"
                            DisplayMode="CompactInline"
-                           HamburgerWidth="48"
+                           SelectedIndex="0"
+                           Style="{StaticResource MahApps.Styles.HamburgerMenu.CreatorsUpdate}"
                            ItemTemplate="{StaticResource MenuItemTemplate}"
                            prism:RegionManager.RegionName="{x:Static s:RegionConstants.MainContentRegion}">
 
@@ -50,34 +51,51 @@
        
             <mah:HamburgerMenu.ContentTemplate>
                 <DataTemplate>
-                    <mah:TransitioningContentControl Content="{Binding}" RestartTransitionOnContentChange="True" Transition="Custom">
-                        <mah:TransitioningContentControl.CustomVisualStates>
-                            <VisualState x:Name="CustomTransition">
-                                <Storyboard>
-                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="{StaticResource MahApps.Brushes.Accent2}" Padding="8">
+                            <TextBlock Text="{Binding SelectedItem.Label, ElementName=HamburgerMenuControl}" 
+                                       Typography.Capitals="SmallCaps"
+                                       FontSize="32" 
+                                       Foreground="{StaticResource MahApps.Brushes.IdealForeground}"/>
+                        </Border>
+
+                        <mah:TransitioningContentControl Grid.Row="1" 
+                                                         Content="{Binding}" 
+                                                         RestartTransitionOnContentChange="True" Transition="Custom"
+                                                         Background="{StaticResource MahApps.Brushes.Accent4}">
+                            <mah:TransitioningContentControl.CustomVisualStates>
+                                <VisualState x:Name="CustomTransition">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                                            Storyboard.TargetName="CurrentContentPresentationSite"
                                                            Storyboard.TargetProperty="(UIElement.Opacity)">
-                                        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                        <SplineDoubleKeyFrame KeyTime="00:00:00.150" Value="1" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00.150" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                                            Storyboard.TargetName="CurrentContentPresentationSite"
                                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)">
-                                        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="200" />
-                                        <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1"
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="200" />
+                                            <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1"
                                                     KeyTime="00:00:00.300"
                                                     Value="0" />
-                                    </DoubleAnimationUsingKeyFrames>
+                                        </DoubleAnimationUsingKeyFrames>
 
-                                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
                                                            Storyboard.TargetName="PreviousContentPresentationSite"
                                                            Storyboard.TargetProperty="(UIElement.Opacity)">
-                                        <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </VisualState>
-                        </mah:TransitioningContentControl.CustomVisualStates>
-                    </mah:TransitioningContentControl>
+                                            <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </mah:TransitioningContentControl.CustomVisualStates>
+                        </mah:TransitioningContentControl>
+                    </Grid>
                 </DataTemplate>
             </mah:HamburgerMenu.ContentTemplate>
         </mah:HamburgerMenu>
