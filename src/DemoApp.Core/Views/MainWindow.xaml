@@ -12,7 +12,7 @@
                  prism:ViewModelLocator.AutoWireViewModel="True"
                  WindowStartupLocation="CenterScreen"
                  mc:Ignorable="d"
-                 Title="DemoApp" Height="800" Width="1000">
+                 Title="DemoApp" Height="1000" Width="1000">
 
     <mah:MetroWindow.Resources>
         <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type c:DemoMenuItem}">
@@ -57,11 +57,11 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <Border Background="{StaticResource MahApps.Brushes.Accent2}" Padding="8">
+                        <Border Background="{StaticResource MahApps.Brushes.Accent4}" Padding="8">
                             <TextBlock Text="{Binding SelectedItem.Label, ElementName=HamburgerMenuControl}" 
                                        Typography.Capitals="SmallCaps"
-                                       FontSize="32" 
-                                       Foreground="{StaticResource MahApps.Brushes.IdealForeground}"/>
+                                       FontSize="50" 
+                                       Foreground="{StaticResource MahApps.Brushes.Accent}"/>
                         </Border>
 
                         <mah:TransitioningContentControl Grid.Row="1" 
