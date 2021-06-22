@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DemoApp.Gallery.Views"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
@@ -20,30 +21,67 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    
-                    <TextBox Text="{Binding ImageUrl}" Padding="10"/>
-                    <Button Grid.Column="1" Content="Submit" Command="{Binding SubmitCommand}" Padding="20,10"/>
+
+                    <Button Grid.Column="0" 
+                            Content="Import" 
+                            Command="{Binding ImportImageFromFileCommand}" 
+                            Padding="20,10" 
+                            Margin="0,0,20,0"/>
+
+                    <TextBox Grid.Column="1" Text="{Binding ImageUrl}" 
+                             Padding="10"
+                             Visibility="{Binding LoadingImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                    <ProgressBar Grid.Column="1" 
+                                 Value="{Binding ProgressValue}" 
+                                 Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <Button Grid.Column="2" 
+                            Content="Add Image" 
+                            Command="{Binding SubmitCommand}" 
+                            Padding="20,10"
+                            Visibility="{Binding LoadingImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                    <TextBlock Grid.Column="2" 
+                               Text="{Binding ProgressText}"
+                               TextWrapping="Wrap"
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               Margin="20,10"
+                               Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </Grid>
 
-                <StackPanel Grid.Row="1" 
-                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ProgressBar Value="{Binding ProgressValue}" 
-                                 Height="25" 
-                                 Width="300" 
-                                 Margin="0,0,0,15"/>
-                    <TextBlock Text="{Binding ProgressText}"
-                               TextWrapping="Wrap"
-                               HorizontalAlignment="Center"/>
-                </StackPanel>
-
-                <Image Grid.Row="1" 
-                       Source="{Binding DisplayImage}" 
-                       Visibility="{Binding LoadingImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-
+                <ListBox Grid.Row="1" 
+                         ItemsSource="{Binding ImagesLiveView}" 
+                         Padding="10,20"
+                         BorderThickness="0"
+                         Background="Transparent"  
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True" ItemWidth="250"
+                                       HorizontalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                            <Setter Property="Padding" Value="4"/>
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding}" 
+                                   RenderOptions.BitmapScalingMode="Fant"
+                                   Stretch="Fill"
+                                   StretchDirection="Both"
+                                   MaxHeight="200"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
         </Border>        
     </Grid>

@@ -1,20 +1,26 @@
 ﻿using AsyncAwaitBestPractices.MVVM;
 using DemoApp.Gallery.Services;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace DemoApp.Gallery.ViewModels
 {
     /// <summary>
     /// - Retrieve pictures from API or import from local files
     /// - Download picture
+    /// - Show pictures in a gallery
     /// </summary>
     public class GalleryViewModel : BindableBase, INavigationAware
     {
@@ -23,7 +29,27 @@ namespace DemoApp.Gallery.ViewModels
         public GalleryViewModel(IContainerProvider provider)
         {
             _galleryService = provider.Resolve<GalleryService>();
+            ImagesView = CollectionViewSource.GetDefaultView(Images);
+            ImagesView.Filter = o =>
+            {
+                // This condition must be true for the row to be visible on the grid.
+                //return ((RowViewModel)o).IsVisible == true;
+                return true;
+            };
+            ImagesLiveView = (ICollectionViewLiveShaping)ImagesView;
+            if(ImagesLiveView.CanChangeLiveFiltering)
+            {
+                ImagesLiveView.IsLiveFiltering = true;
+            }
+
+            // For completeness. Changing these properties fires a change notification (although
+            // we bypass this and manually call a bulk update using Refresh() for speed).
+            //ImagesLiveView.LiveFilteringProperties.Add("IsVisible");
         }
+
+        private ObservableCollection<ImageSource> Images { get; set; } = new ObservableCollection<ImageSource>();
+        private ICollectionView ImagesView { get; set; }
+        public ICollectionViewLiveShaping ImagesLiveView { get; set; }
 
         private string _imageUrl = "https://images.pexels.com/photos/842711/pexels-photo-842711.jpeg?cs=srgb&dl=pexels-christian-heitz-842711.jpg&fm=jpg";
         public string ImageUrl
@@ -46,13 +72,6 @@ namespace DemoApp.Gallery.ViewModels
             set => SetProperty(ref _progressValue, value);
         }
 
-        public ImageSource _displayImage;
-        public ImageSource DisplayImage
-        {
-            get => _displayImage;
-            set => SetProperty(ref _displayImage, value);
-        }
-
         private bool _loadingImage;
         public bool LoadingImage
         {
@@ -61,6 +80,22 @@ namespace DemoApp.Gallery.ViewModels
         }
 
         private CancellationTokenSource Cts { get; set; }
+
+        private ICommand _importImageFromFileCommand;
+        public ICommand ImportImageFromFileCommand => _importImageFromFileCommand ??
+            (_importImageFromFileCommand = new DelegateCommand(ImportImageFromFile));
+
+        private void ImportImageFromFile()
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;...";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Uri fileUri = new Uri(openFileDialog.FileName);
+                var newImage = new BitmapImage(fileUri);
+                Images.Add(newImage);
+            }
+        }
 
         private ICommand _submitCommand;
         public ICommand SubmitCommand => _submitCommand ??
@@ -75,8 +110,9 @@ namespace DemoApp.Gallery.ViewModels
                 ProgressValue = value * 100;
                 ProgressText = $"{value * 100}%";
             });
-            DisplayImage = await _galleryService.GetImageFromURL(ImageUrl, progress, Cts.Token);
 
+            var newImage = await _galleryService.GetImageFromURL(ImageUrl, progress, Cts.Token);
+            Images.Add(newImage);
             ProgressText = "Completed";
             LoadingImage = false;
         }
