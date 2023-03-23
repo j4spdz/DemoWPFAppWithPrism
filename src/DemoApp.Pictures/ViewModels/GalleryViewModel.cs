@@ -1,5 +1,7 @@
 ﻿using AsyncAwaitBestPractices.MVVM;
 using DemoApp.Gallery.Services;
+using DemoApp.Shared.Helper;
+using DemoApp.Shared.Helper.Funcs;
 using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Ioc;
@@ -8,8 +10,10 @@ using Prism.Regions;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -94,6 +98,23 @@ namespace DemoApp.Gallery.ViewModels
                 Uri fileUri = new Uri(openFileDialog.FileName);
                 var newImage = new BitmapImage(fileUri);
                 Images.Add(newImage);
+            }
+        }
+
+        private ICommand _importImagesFromFolderCommand;
+        public ICommand ImportImageFromFolderCommand => _importImagesFromFolderCommand ??
+            (_importImagesFromFolderCommand = new DelegateCommand(ImportImagesFromFolder));
+
+        private void ImportImagesFromFolder()
+        {
+            var dlg = new FolderPicker();
+            dlg.InputPath = "C:";
+            if (dlg.ShowDialog() == true)
+            {
+                var filters = new String[] { "jpg", "jpeg", "png", "gif", "tiff", "bmp", "svg" };
+                var imagePaths = CommonFuncs.GetFilesFromFolder(dlg.ResultPath, filters, false);
+                var images = imagePaths.Select(filename => new BitmapImage(new Uri(filename)));
+                Images.AddRange(images);
             }
         }
 

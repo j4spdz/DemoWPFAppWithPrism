@@ -13,7 +13,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <Grid>
-        <Border Padding="20">
+        <Border>
             <Grid x:Name="detailsGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -23,35 +23,79 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBox Grid.Column="0" Text="{Binding ImageUrl}" 
-                             Padding="10"
-                             Visibility="{Binding LoadingImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-                    <ProgressBar Grid.Column="0" 
-                                 Value="{Binding ProgressValue}" 
-                                 Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <!-- Import from URL -->
+                    <Border BorderBrush="{StaticResource MahApps.Brushes.Control.Border}" 
+                            BorderThickness="1"
+                            Background="{StaticResource MahApps.Brushes.ThemeBackground}"
+                            Padding="10"
+                            Margin="20 0 10 0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                    <Button Grid.Column="1" 
-                            Content="Add Image" 
-                            Command="{Binding SubmitCommand}" 
-                            Padding="20,10"
-                            Visibility="{Binding LoadingImage, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-                    <TextBlock Grid.Column="1" 
-                               Text="{Binding ProgressText}"
-                               TextWrapping="Wrap"
-                               VerticalAlignment="Center"
-                               FontWeight="Bold"
-                               Margin="20,10"
-                               Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="2" 
-                            Content="Import From File" 
-                            Command="{Binding ImportImageFromFileCommand}" 
-                            Padding="20,10" 
-                            Margin="0,0,5,0"/>
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                                <TextBlock Text="Import Image From URL"
+                                           Foreground="{StaticResource MahApps.Brushes.Text}"
+                                           FontSize="18"/>
+                                
+                                <ProgressBar Value="{Binding ProgressValue}" 
+                                             Width="200"
+                                             Height="20"
+                                             VerticalAlignment="Center"
+                                             Margin="10 0"
+                                             Background="White"
+                                             Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <TextBlock Text="{Binding ProgressText}"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Center"
+                                           Visibility="{Binding LoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+
+                            <TextBox Grid.Row="1" Grid.Column="0" 
+                                     Text="{Binding ImageUrl}" 
+                                     Padding="10"
+                                     Margin="5 0"/>
+                            <Button Grid.Row="1" Grid.Column="1"
+                                    Content="Import" 
+                                    Command="{Binding SubmitCommand}" 
+                                    Padding="20,10"
+                                    Margin="5 0"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Import from local -->
+                    <Border Grid.Column="1" BorderBrush="{StaticResource MahApps.Brushes.Control.Border}" 
+                            BorderThickness="1"
+                            Background="{StaticResource MahApps.Brushes.ThemeBackground}"
+                            Padding="10"
+                            Margin="10 0 20 0">
+                        <StackPanel>
+                            <TextBlock Text="Import Images From Local"
+                                           Foreground="{StaticResource MahApps.Brushes.Text}"
+                                           FontSize="18"/>
+
+                            <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                                <Button Content="Import From File" 
+                                Command="{Binding ImportImageFromFileCommand}" 
+                                Padding="20,10" 
+                                Margin="5 0"/>
+
+                                <Button Content="Import From Folder" 
+                                Command="{Binding ImportImageFromFolderCommand}" 
+                                Padding="20,10"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </Grid>
 
                 <ListBox Grid.Row="1" 
@@ -61,7 +105,7 @@
                          BorderThickness="0"
                          Background="Transparent" 
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         MaxWidth="900">
+                         MaxWidth="1200">
                     
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
